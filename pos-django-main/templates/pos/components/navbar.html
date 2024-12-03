@@ -1,0 +1,57 @@
+{% load filters %}
+<nav class="navbar navbar-expand-lg sticky-top navbar-dark bg-dark">
+  <a class="navbar-brand" href="{% url 'pos:home' %}">I-POS</a>
+  <button class="navbar-toggler"
+          type="button"
+          data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarNav">
+    <ul class="navbar-nav">
+      <li class="nav-item active">
+        <a class="nav-link" href="{% url 'pos:buat-order' %}">New Order</a>
+      </li>
+      <li class="nav-item active">
+        <a class="nav-link" href="{% url 'pos:order-aktif' %}">Order Aktif</a>
+      </li>
+      <li class="nav-item active">
+        <a class="nav-link" href="{% url 'pos:laporan-penjualan' %}">Laporan</a>
+      </li>
+      <!-- Nonaktifkan MasterMenu Ketika user Level_Kasir-->
+      {% if not user|is_kasir %}
+      <li class="nav-item active">
+        <a class="nav-link" href="{% url 'pos:master-menu' %}">MasterMenu</a>
+      </li>
+      {% endif %}
+      <!-- Nonaktifkan register Ketika user Level_Kasir-->
+      {% if not user|is_kasir %}
+      <li class="nav-item active">
+        <a class="nav-link" href="{% url 'users:register' %}">Register</a>
+      </li>
+      {% endif %}
+    </ul>
+
+    <!-- Jika pengguna terautentikasi (login), tampilkan nama pengguna dan tombol logout -->
+    {% if user.is_authenticated %}
+    <ul class="navbar-nav ml-auto">
+      <li class="nav-item">
+        <span class="navbar-text text-white mr-3">Hello, <a href="{% url 'users:profile' %}">{{ user.username }}</a></span>
+      </li>
+      <li class="nav-item">
+        <form method="POST" action="{% url 'users:logout' %}">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-warning btn-sm">Logout</button>
+        </form>
+      </li>
+    </ul>
+    {% else %}
+    <!-- Opsional, Anda dapat menambahkan tautan login/daftar untuk pengguna yang tidak terautentikasi -->
+    <ul class="navbar-nav ml-auto">
+      <li class="nav-item">
+        <a href="{% url 'users:login' %}" class="btn btn-success btn-sm">Login</a>
+      </li>
+    </ul>
+    {% endif %}
+    
+  </div>
+</nav>

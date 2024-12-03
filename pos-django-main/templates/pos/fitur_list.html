@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daftar Fitur</title>
+</head>
+<body>
+    <h1>Daftar Fitur</h1>
+    
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Nama Fitur</th>
+                <th>Status</th>
+                <th>Aksi</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for fitur in fitur %}
+            <tr>
+                <td>{{ fitur.nama }}</td>
+                <td>
+                    {% if fitur.aktif %}
+                    Aktif
+                    {% else %}
+                    Non-Aktif
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="{% url 'pos:fitur_toggle' fitur.id %}">
+                        {% if fitur.aktif %}
+                        Non-Aktifkan
+                        {% else %}
+                        Aktifkan
+                        {% endif %}
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+</body>
+</html>

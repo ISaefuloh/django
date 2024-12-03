@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Struk Pembayaran</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            padding-top: 20px;
+        }
+        .header {
+            text-align: center;
+            font-size: 18px;
+        }
+        .order-details, .item-list {
+            margin-top: 20px;
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .order-details td, .item-list td, .item-list th {
+            padding: 5px;
+            border: 1px solid #ddd;
+        }
+        .order-details th, .item-list th {
+            text-align: left;
+            background-color: #f2f2f2;
+        }
+        .total-row td {
+            font-weight: bold;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 14px;
+        }
+        .button-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .btn {
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            background-color: #198754;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .btn-back {
+            background-color: #ffc107;
+        }
+        .btn:hover {
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    {% load humanize %}
+    <div class="container">
+        <div class="header">
+            <h2>Struk Pembayaran</h2>
+            <p>{{ order.tanggal|date:"Y-m-d" }}</p>
+        </div>
+        
+        <!-- Detail Pesanan -->
+        <table class="order-details" width="100%">
+            <tr>
+                <td><strong>No. Nota:</strong></td>
+                <td>Kz01{{ order.id }}</td>
+            </tr>
+            <tr>
+                <td><strong>Pelanggan:</strong></td>
+                <td>{{ order.pelanggan }}</td>
+            </tr>
+            <tr>
+                <td><strong>Total:</strong></td>
+                <td>Rp. {{ order.total|intcomma }}</td>
+            </tr>
+            <tr>
+                <td><strong>Dibayar:</strong></td>
+                <td>Rp. {{ order.dibayar|intcomma }}</td>
+            </tr>
+            <tr>
+                <td><strong>Kembalian:</strong></td>
+                <td>Rp. {{ order.kembali|intcomma }}</td>
+            </tr>
+        </table>
+        
+        <!-- Daftar Item Pesanan -->
+        <table class="item-list" width="100%">
+            <thead>
+                <tr>
+                    <th>Menu</th>
+                    <th>Harga</th>
+                    <th>Qty</th>
+                    <th>Subtotal</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items %}
+                <tr>
+                    <td>{{ item.menu.nama }}</td>
+                    <td>Rp. {{ item.harga|intcomma }}</td>
+                    <td>{{ item.qty }}</td>
+                    <td>Rp. {{ item.subtotal|intcomma }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>Terima kasih!</p>
+        </div>
+
+        <!-- Button untuk Kembali dan Cetak -->
+        <div class="button-container">
+            <!-- Tombol Back (Kembali ke halaman sebelumnya) -->
+            <button class="btn btn-back" onclick="window.history.back()">Kembali</button>
+
+            <!-- Tombol Print (untuk mencetak struk) -->
+            <button class="btn" onclick="window.print()">Cetak Struk</button>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+
+{% block title %}Master Menu{% endblock %}
+
+{% block content %}
+{% load humanize %}
+
+<style>
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    th, td {
+      padding: 8px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+
+    tr:hover {background-color: green;}
+</style>
+
+{% if messages %}
+  <div class="alert alert-success" id="message-alert">
+    {% for message in messages %}
+      <p>{{ message }}</p>
+    {% endfor %}
+  </div>
+
+  <script type="text/javascript">
+    // Tunggu beberapa detik sebelum menghilangkan pesan
+    setTimeout(function() {
+      var alert = document.getElementById("message-alert");
+      if (alert) {
+        alert.style.display = "none";  // Menyembunyikan pesan setelah 5 detik
+      }
+    }, 5000);  // Pesan akan hilang setelah 5000 milidetik (5 detik)
+  </script>
+{% endif %}
+
+<h1 class="display-3 text-shadow d-flex justify-content-center">Daftar Menu</h1>
+<a href="{% url 'pos:tambah-menu' %}" class="btn btn-success btn-sm">Tambah Menu Baru</a>
+
+<hr>
+
+<table style="width:100%" id="reportTable">
+    <thead>
+        <tr>
+            <th>Nama Menu</th>
+            <th>Harga(Rp)</th>
+            <th>Gambar</th>
+            <th>Aksi</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for menu in menus %}
+            <tr>
+                <td>{{ menu.nama }}</td>
+                <td>{{ menu.price|intcomma }}</td>
+                <td><img src="{{ menu.image }}" alt="{{ menu.nama }}" style="width: 100px; height: 100px;"></td>
+                <td>
+                    <!-- Tautan untuk mengedit menu -->
+                    <a href="{% url 'pos:edit-menu' menu.id %}" class="btn btn-warning btn-sm">Edit</a> |
+                    <!-- Tautan untuk menghapus menu -->
+                    <a href="{% url 'pos:hapus-menu' menu.id %}" class="btn btn-danger btn-sm" onclick="return confirm('Anda yakin ingin menghapus menu ini?')">Hapus</a>
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<div class="pagination">
+    <span class="step-links">
+        {% if menus.has_previous %}
+            <a href="?page=1">&laquo; pertama</a>
+            <a href="?page={{ menus.previous_page_number }}">sebelumnya</a>
+        {% endif %}
+
+        <span class="current">
+            Halaman {{ menus.number }} dari {{ menus.paginator.num_pages }}.
+        </span>
+
+        {% if menus.has_next %}
+            <a href="?page={{ menus.next_page_number }}">selanjutnya</a>
+            <a href="?page={{ menus.paginator.num_pages }}">terakhir &raquo;</a>
+        {% endif %}
+    </span>
+</div>
+
+{% endblock %}

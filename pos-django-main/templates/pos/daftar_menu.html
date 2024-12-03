@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}Daftar Menu{% endblock %}
+
+{% block content %}
+
+{% if messages %}
+  <div class="alert alert-danger" id="message-alert">
+    {% for message in messages %}
+      <p>{{ message }}</p>
+    {% endfor %}
+  </div>
+
+  <script type="text/javascript">
+    // Tunggu beberapa detik sebelum menghilangkan pesan
+    setTimeout(function() {
+      var alert = document.getElementById("message-alert");
+      if (alert) {
+        alert.style.display = "none";
+      }
+    }, 5000);  // Pesan akan hilang setelah 5 detik (5000 ms)
+  </script>
+{% endif %}
+
+<div class="row mt-5">
+  <div class="col-md-12">
+    <h1 class="display-2 text-shadow d-flex justify-content-center">
+      Daftar Menu
+    </h1>
+    <h4 class="mt-4 d-flex justify-content-center">
+      Pilih menu sesuai selera Anda
+    </h4>
+  </div>
+</div>
+
+<div class="row mt-3">
+  <div class="col-lg-12">
+    {% include "pos/components/order_info.html" with order=order %}
+  </div>
+</div>
+
+<div class="row mt-3">
+  <div class="col-lg-12">
+    <!-- Gantilah card-columns dengan grid -->
+    <div class="row">
+      {% for menu in menus %}
+        <div class="col-lg-2 col-md-4 col-sm-6 mb-4">  <!-- 5 items per row -->
+          <div class="card bg-warning text-center text-dark border-dark shadow">
+            <img src="{{ menu.image }}" class="card-img-top" alt="...">
+            <div class="card-body">
+              <h5 class="card-title">{{ menu.nama }}</h5>
+              <h6 class="card-text">IDR {{ menu.price }}</h6> 
+              <a href="{% url 'pos:tambah-item' order_id=order.id menu_id=menu.id %}" class="btn btn-dark btn-block btn-sm">pesan</a>
+              <div class="btn-group" role="group" aria-label="Basic example">
+                <a href="{% url 'pos:tambah-qty' order_id=order.id menu_id=menu.id %}" class="btn btn-success btn-sm">(+)</a>
+                <a href="{% url 'pos:kurangi-qty' order_id=order.id menu_id=menu.id %}" class="btn btn-danger btn-sm">(-)</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+{% endblock %}

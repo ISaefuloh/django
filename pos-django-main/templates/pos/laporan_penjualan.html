@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+{% load filters %}
+{% block title %}Laporan Penjualan{% endblock %}
+
+{% block content %}
+{% load humanize %}
+
+{% if messages %}
+  <div class="alert alert-danger" id="message-alert">
+    {% for message in messages %}
+      <p>{{ message }}</p>
+    {% endfor %}
+  </div>
+
+  <script type="text/javascript">
+    // Tunggu beberapa detik sebelum menghilangkan pesan
+    setTimeout(function() {
+      var alert = document.getElementById("message-alert");
+      if (alert) {
+        alert.style.display = "none";  // Menyembunyikan pesan setelah 5 detik
+      }
+    }, 5000);  // Pesan akan hilang setelah 5000 milidetik (5 detik)
+  </script>
+{% endif %}
+
+<style>
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    th, td {
+      padding: 8px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+
+    tr:hover {background-color: green;}
+</style>
+    
+<div class="row mt-5">
+    <div class="col-md-12">
+        <h1 class="display-3 text-shadow d-flex justify-content-center">Laporan Penjualan</h1>
+
+        <hr>
+
+        <form method="POST">
+            {% csrf_token %}
+            <div class="form-row align-items-center">
+                <!-- Nonaktifkan Filter Tanggal Ketika user Level_Kasir-->
+                {% if not user|is_kasir %}
+                <!-- Filter Tanggal -->
+                <div class="col-auto">
+                    <label for="awal_tgl">Dari</label>
+                </div>
+                <div class="col-auto">
+                    <input type="date" name="awal_tgl" class="form-control form-control-sm">
+                </div>
+                <div class="col-auto">
+                    <label for="akhir_tgl">Sampai</label>
+                </div>
+                <div class="col-auto">
+                    <input type="date" name="akhir_tgl" class="form-control form-control-sm">
+                </div>
+                <!-- Tombol View -->
+                <div class="col-auto">
+                    <button type="submit" class="btn btn-success btn-sm">View</button>
+                </div>
+                {% endif %}
+      
+              <!-- Input Pencarian di sebelah kanan -->
+              <div class="col-auto ml-auto">  <!-- Kelas ml-auto untuk push ke kanan -->
+                  <input type="text" id="searchInput" class="form-control form-control-sm" placeholder="Cari No. Nota..." onkeyup="searchTable()">
+              </div>
+            </div>
+        </form>
+
+        <hr>
+
+        <table style="width:100%" id="reportTable">
+            <thead>
+                <tr>
+                    <th>Tanggal</th>
+                    <th>No.Nota</th>
+                    <th>Pemasukan(Rp)</th>
+                    <th>Jumlah(Rp)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in order %}
+                <tr>
+                    <td>{{ order.tanggal }}</td>
+                    <td><a href="{% url 'pos:cetak-struk' order.id %}" class="btn btn-secondary btn-sm">Kz01{{ order.id }}</a></td>
+                    <td>{{ order.total|intcomma }}</td>
+                </tr>
+                {% endfor %}
+                <tr>
+                    <td><strong>T O T A L</strong></td>
+                    <td></td>
+                    <td></td>
+                    <td><strong>{{ jumlah|intcomma }}</strong></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    function searchTable() {
+        var input, filter, table, tr, td, i, txtValue;
+        input = document.getElementById("searchInput");
+        filter = input.value.toUpperCase();
+        table = document.getElementById("reportTable");
+        tr = table.getElementsByTagName("tr");
+
+        for (i = 1; i < tr.length; i++) {  // Skip the header row
+            td = tr[i].getElementsByTagName("td")[1];  // Second column is the No. Nota
+            if (td) {
+                txtValue = td.textContent || td.innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }
+        }
+    }
+</script>
+
+{% endblock %}
